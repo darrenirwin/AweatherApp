@@ -1,0 +1,229 @@
+<div data-role="view" data-title="" data-layout="main" data-model="APP.models.home">
+  <h2 data-bind="html: title"></h2>
+   
+    <script>
+        
+        jQuery(document).ready(function($) { 
+           
+            var city = geoplugin_city();
+            var region =  geoplugin_region();
+            var full_loc = city + ", " + region;
+            
+            function getUserLocation() { 
+            //check if the geolocation object is supported, if so get position
+            if (navigator.geolocation)
+	            navigator.geolocation.getCurrentPosition(displayLocation, displayError);
+            else
+                document.getElementById("locationData").innerHTML = "Sorry - your browser doesn't support geolocation:(";
+                 }
+            
+            function displayLocation(position) { 
+                //build text string including co-ordinate data passed in parameter
+                var displayText = "User latitude is " + position.coords.latitude + " and longitude is " + position.coords.longitude;
+                //display the string for demonstration
+               document.getElementById("locationData").innerHTML = displayText;
+                }
+            
+              getUserLocation(); 
+            
+            function displayError(error) { 
+            //get a reference to the HTML element for writing result
+            var locationElement = document.getElementById("locationData");
+            //find out which error we have, output message accordingly
+            switch(error.code) {
+            case error.PERMISSION_DENIED:
+	            locationElement.innerHTML = "Permission was denied";
+	            break;
+            case error.POSITION_UNAVAILABLE:
+	            locationElement.innerHTML = "Location data not available";
+	            break;
+            case error.TIMEOUT:
+	            locationElement.innerHTML = "Location request timeout";
+	            break;
+            case error.UNKNOWN_ERROR:
+	            locationElement.innerHTML = "An unspecified error occurred";
+	            break;
+                default:
+	            locationElement.innerHTML = "Who knows what happened...";
+	        break;
+}}
+             $('div').each(function() {
+               $(this).attr('data-title', city);
+             });
+            
+          $.ajax({
+            url : "http://api.wunderground.com/api/65ab9eb852608aef/geolookup/conditions/forecast/q/Australia/" + city + ".json",
+            dataType : "jsonp",
+            success : function(parsed_json) {     
+            var lat = parsed_json.location.lat;
+            var lon = parsed_json.location.lon;
+            var full = parsed_json.current_observation.display_location.full;
+                
+            var location = "location: " + parsed_json.location.city;
+            var temp_c = parsed_json['current_observation']['temp_c'];
+            //var obs = "Observations: " + parsed_json['current_observation']['weather'];
+            var mainicon = parsed_json['current_observation']['icon'];
+            var mainicon_url = 'http://icons.wxug.com/i/c/k/' + mainicon;
+            var main_img='<img src="'+ mainicon_url +'" height="75" width="75" alt="">';
+            var pop = parsed_json['forecast']['txt_forecast']['forecastday'][0]['pop'];   
+            var mm = parsed_json['forecast']['txt_forecast']['forecastday'][0]['mm']; 
+            var av_wind = parsed_json['forecast']['simpleforecast']['forecastday'][0]['avewind']['kph'];
+                
+            var forecast_day1_icon = parsed_json['forecast']['txt_forecast']['forecastday'][2]['icon_url'];
+                // var forecast_day1_url = 'http://icons.wxug.com/i/c/i/' + forecast_day1_icon;
+            var forecast_day1_img ='<img src="'+ forecast_day1_icon +'"  alt="">';
+                
+            var forecast_day2icon = parsed_json['forecast']['txt_forecast']['forecastday'][4]['icon_url'];
+                 // var forecast_day1_url = 'http://icons.wxug.com/i/c/i/' + forecast_day1_icon;
+            var forecast_day2img ='<img src="'+ forecast_day2icon +'"  alt="">';
+               
+            var forecast_day3icon= parsed_json['forecast']['txt_forecast']['forecastday'][6]['icon_url'];
+                 // var forecast_day1_url = 'http://icons.wxug.com/i/c/i/' + forecast_day1_icon;
+            var forecast_day3img ='<img src="'+ forecast_day3icon +'"  alt="">';
+            
+            //Forecast
+            var forecastDay1 = parsed_json['forecast']['txt_forecast']['forecastday'][2]['title'];
+                forecastDay1 += parsed_json['forecast']['txt_forecast']['forecastday'][2]['fcttext_metric']; 
+                
+            var forecastDay2 = parsed_json['forecast']['txt_forecast']['forecastday'][4]['title'];
+                forecastDay2 += parsed_json['forecast']['txt_forecast']['forecastday'][4]['fcttext_metric'];
+                
+            var forecastDay3 = parsed_json['forecast']['txt_forecast']['forecastday'][6]['title'];
+                forecastDay3 += parsed_json['forecast']['txt_forecast']['forecastday'][6]['fcttext_metric'];
+                
+            var ThreeDayForecast = forecastDay1 + forecastDay2 + forecastDay3;
+            var low = parsed_json['forecast']['simpleforecast']['forecastday'][0]['low']['celsius']; 
+            var high = parsed_json['forecast']['simpleforecast']['forecastday'][0]['high']['celsius'];
+                
+            var period1_high = parsed_json['forecast']['simpleforecast']['forecastday'][1]['high']['celsius'];
+            var period1_low = parsed_json['forecast']['simpleforecast']['forecastday'][1]['low']['celsius'];
+                
+            var period2_high = parsed_json['forecast']['simpleforecast']['forecastday'][2]['high']['celsius'];
+            var period2_low = parsed_json['forecast']['simpleforecast']['forecastday'][2]['low']['celsius'];
+                
+            var period3_high = parsed_json['forecast']['simpleforecast']['forecastday'][3]['high']['celsius'];
+            var period3_low = parsed_json['forecast']['simpleforecast']['forecastday'][3]['low']['celsius'];
+                
+            var monthNames = [ "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December" ];
+            var dayNames= ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+
+            var newDate = new Date();
+            newDate.setDate(newDate.getDate());    
+            $('#Date').html(dayNames[newDate.getDay()] + " "
+                            + newDate.getDate() + ' ' 
+                            + monthNames[newDate.getMonth()] + ' ' 
+                            + newDate.getFullYear());
+                
+                 var myCircle = Circles.create({
+                    id:         'circles-1',
+                    radius:    40,
+                    value:     pop,
+                    maxValue:   100,
+                    width:      10,
+                    text:       function(value){return value + '%';},
+                    colors:     ['lightblue', 'blue'],
+                    duration:   400,
+                    wrpClass:   'circles-wrp',
+                    textClass:  'circles-text'
+                 })
+                 
+                  var myCircle1 = Circles.create({
+                    id:         'circles-2',
+                    radius:    40,
+                    value:     mm,
+                    maxValue:   100,
+                    width:      10,
+                    text:       function(value){return value + 'mm';},
+                    colors:     ['#FCE6A4', '#EFB917'],
+                    duration:   400,
+                    wrpClass:   'circles-wrp',
+                    textClass:  'circles-text'
+                 })
+                   var myCircle2 = Circles.create({
+                    id:         'circles-3',
+                    radius:    40,
+                    value:     av_wind,
+                    maxValue:   100,
+                    width:      10,
+                    text:       function(value){return value + 'km/h';},
+                    colors:     ['#F8F9B6', '#D2D558'],
+                    duration:   400,
+                    wrpClass:   'circles-wrp',
+                    textClass:  'circles-text'
+                 })
+                   
+                   
+                               
+                 //document.getElementById("location").innerHTML = location;
+                document.getElementById("temp").innerHTML = temp_c + '&#176;' + "<br /> Currently";
+                document.getElementById("image").innerHTML = main_img;
+                document.getElementById("low").innerHTML = low  + '&#176;' + "<br /> <span style='font-size:15px; vertical-align:top;'>low</span>";
+                document.getElementById("high").innerHTML = high  + '&#176;' + "<br /> <span style='font-size:15px; vertical-align:top;'>high</span>";
+                //document.getElementById("forecastDay1Title").innerHTML = forecast_tDay1_Title;
+              //document.getElementById("forecastDay1").innerHTML = forecastDay1;
+              //document.getElementById("forecastDay2").innerHTML = forecastDay2;
+              //document.getElementById("forecastDay3").innerHTML = forecastDay3;
+                document.getElementById("Day1").innerHTML = forecast_day1_img + "<br />" + period1_low + " - " + period1_high;
+                document.getElementById("Day2").innerHTML = forecast_day2img + "<br />" + period2_low + " - " + period2_high;
+                document.getElementById("Day3").innerHTML = forecast_day3img + "<br />" + period3_low + " - " + period3_high;
+                //document.getElementById("period1_high").innerHTML = period1_high;
+          }
+      });
+  });
+        
+        
+    </script>
+  
+  
+      <ul id="listView"></ul>
+   <!-- <style>
+		#canvas.circle {
+			display: inline-block;
+			margin: 1em;
+		}
+
+		.circles-decimals {
+			font-size: .4em;
+		}
+        
+        .circles-text {
+			font-size: .4em;
+		}
+	</style>-->
+    
+    <div style="padding:10px;"> 
+        <!--DATE-->
+        <div style="font-weight:bold; text-align:center; font-size:22px;" id="Date">
+        </div>
+            
+        
+        <!--MIN/ICON/MAX-->
+        <div style="text-align:center;"> 
+            <div id="low" style="float: left; padding:20px; text-align:center; font-weight:bold; font-size:40px;"></div>
+            <div id="image" style="display: inline"></div>
+            <div id="high" style="float: right; padding:20px; text-align:center; font-weight:bold; font-size:40px;"></div>
+            <p id="temp" style="font-weight:bold; text-align:center; font-size:15px; vertical-align:top; border:1 thin black;">
+            </p>
+        </div>
+
+         <div style="text-align:center;"> 
+            <div class="circle circle-text" id="circles-1" style="float: left; text-align:center;">
+            </div>
+            <div class="circle" id="circles-2" style="display: inline; text-align:center;">
+            </div>
+            <div class="circle" id="circles-3" style="float: right; text-align:center;">
+            </div>
+         </div>
+            
+         <div style="text-align:center;"> 
+            <div id="Day1" style="float: left; text-align:center;">
+            </div>
+            <div id="Day2" style="display: inline; text-align:center;">
+            </div>
+            <div id="Day3" style="float: right; text-align:center;">
+            </div>  
+         </div>
+        
+    </div>
+</div>
