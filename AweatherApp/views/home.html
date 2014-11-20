@@ -68,7 +68,7 @@
             var pop = parsed_json['forecast']['txt_forecast']['forecastday'][0]['pop'];   
             var mm = parsed_json['forecast']['txt_forecast']['forecastday'][0]['mm']; 
             var av_wind = parsed_json['forecast']['simpleforecast']['forecastday'][0]['avewind']['kph'];
-                
+            var tdf = "3 Day Forecast"; 
             var forecast_day1_icon = parsed_json['forecast']['txt_forecast']['forecastday'][2]['icon_url'];
                 // var forecast_day1_url = 'http://icons.wxug.com/i/c/i/' + forecast_day1_icon;
             var forecast_day1_img ='<img src="'+ forecast_day1_icon +'"  alt="">';
@@ -162,9 +162,9 @@
                 document.getElementById("low").innerHTML = low  + '&#176;' + "<br /> <span style='font-size:15px; vertical-align:top;'>low</span>";
                 document.getElementById("high").innerHTML = high  + '&#176;' + "<br /> <span style='font-size:15px; vertical-align:top;'>high</span>";
                 //document.getElementById("forecastDay1Title").innerHTML = forecast_tDay1_Title;
-              //document.getElementById("forecastDay1").innerHTML = forecastDay1;
-              //document.getElementById("forecastDay2").innerHTML = forecastDay2;
-              //document.getElementById("forecastDay3").innerHTML = forecastDay3;
+                //document.getElementById("forecastDay1").innerHTML = forecastDay1;
+                //document.getElementById("forecastDay2").innerHTML = forecastDay2;
+                //document.getElementById("forecastDay3").innerHTML = forecastDay3;
                 document.getElementById("Day1").innerHTML = forecast_day1_img + "<br />" + period1_low + " - " + period1_high;
                 document.getElementById("Day2").innerHTML = forecast_day2img + "<br />" + period2_low + " - " + period2_high;
                 document.getElementById("Day3").innerHTML = forecast_day3img + "<br />" + period3_low + " - " + period3_high;
@@ -175,9 +175,7 @@
         
         
     </script>
-  
-  
-      <ul id="listView"></ul>
+ 
    <!-- <style>
 		#canvas.circle {
 			display: inline-block;
@@ -208,40 +206,16 @@
             </p>
         </div>
         
-        <div id="CurrentObs">
-            
+         <div class="k-block">
+             <div class="k-header k-shadow">Conditions</div>
+             <p id="CurrentObs">
+             </p>
         </div>
-
-         <!--<div style="text-align:center;"> 
-            <div class="circle circle-text" id="circles-1" style="float: left; text-align:center;">
-            </div>
-            <div class="circle" id="circles-2" style="display: inline; text-align:center;">
-            </div>
-            <div class="circle" id="circles-3" style="float: right; text-align:center;">
-            </div>
-             
-         </div>-->
-          
-        <ul data-role="listview" data-style="inset" data-type="group">
-        <li>
-            Tomorrow
-            <ul>
-                <li><a href="views/moreWeather.html" id="Day1"></a></li>
-                <li><a href="views/moreWeather.html" id="Day2"></a></li>
-                <li><a href="views/moreWeather.html" id="Day3"></a></li>
-            </ul>
-        </li>
-                </ul>
         
-        
-         <div style="text-align:center;"> 
-            <div id="Day1" style="float: left; text-align:center;">
-            </div>
-            <div id="Day2" style="display: inline; text-align:center;">
-            </div>
-            <div id="Day3" style="float: right; text-align:center;">
-            </div>  
-         </div>
+        <br />
+         <div id="Day1" class="left"></div>
+         <div id="Day2" class="left"></div>
+         <div id="Day3" class="left"></div>
         
     </div>
 </div>
