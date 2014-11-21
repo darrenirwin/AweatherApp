@@ -1,2 +1,6 @@
 .km-drawer-button:before, .km-drawer-button:after  { content: "\E077"; }
 .left{ float:left; width:33%;}
+
+.km-ios7 .km-view .km-content .km-scrollview {
+    background-color: rgb(255, 148, 0);
+}
